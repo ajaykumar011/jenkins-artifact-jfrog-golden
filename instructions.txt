@@ -1,0 +1,13 @@
+According to the repository permission, you will need to login to your repository with docker login command
+
+docker login cloudzone.jfrog.io
+Pull an image.
+
+docker pull hello-world
+Tag an image.
+
+docker tag hello-world cloudzone.jfrog.io/jenkins-artifact-jfrog-golden/hello-world
+Then push it to your repository.
+
+docker push cloudzone.jfrog.io/jenkins-artifact-jfrog-golden/hello-world
+For additional information please refer to the wiki, in case this repository is still not available in a few minutes please contact support
