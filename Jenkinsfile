@@ -6,7 +6,8 @@ pipeline {
     stages {
         stage ('Clone') {
             steps {
-                git branch: 'main', url: "https://github.com/ajaykumar011/jenkins-artifact-jfrog-golden/"
+                //git branch: 'main', url: 'https://github.com/ajaykumar011/jenkins-artifact-jfrog-golden/'
+                //git branch: 'master', credentialsId: 'bitbucket-cred', url: 'https://bitbucket.org/jenkins-all-in-one/just-test/'
             }
         }
 
