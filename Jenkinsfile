@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage ('Clone') {
             steps {
-                git branch: 'master', url: "https://github.com/ajaykumar011/jenkins-artifact-jfrog-golden"
+                git branch: 'main', url: "https://github.com/ajaykumar011/jenkins-artifact-jfrog-golden.git"
             }
         }
 
