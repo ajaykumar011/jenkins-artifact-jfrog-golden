@@ -3,6 +3,7 @@ pipeline {
     environment{
         SERVER_URL = "cloudzone.jfrog.io"
         CREDENTIALS = "JFROG_WEB_CREDENTIALS"
+        ARTIFACTORY_DOCKER_REGISTRY = "cloudzone.jfrog.io"
     }
     stages {
         stage ('Clone') {
