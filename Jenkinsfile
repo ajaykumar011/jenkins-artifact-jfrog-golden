@@ -16,7 +16,7 @@ pipeline {
         stage ('Artifactory configuration') {
             steps {
                 rtServer (
-                    id: "ARTIFACTORY_SERVER",
+                    id: "CLOUDZONE_ARTIFACTORY_SERVER",
                     url: SERVER_URL,
                     credentialsId: CREDENTIALS
                 )
@@ -34,7 +34,7 @@ pipeline {
         stage ('Push image to Artifactory') {
             steps {
                 rtDockerPush(
-                    serverId: "ARTIFACTORY_SERVER",
+                    serverId: "CLOUDZONE_ARTIFACTORY_SERVER",
                     image: ARTIFACTORY_DOCKER_REGISTRY + '/hello-world:latest',
                     // Host:
                     // On OSX: "tcp://127.0.0.1:1234"
@@ -50,7 +50,7 @@ pipeline {
         stage ('Publish build info') {
             steps {
                 rtPublishBuildInfo (
-                    serverId: "ARTIFACTORY_SERVER"
+                    serverId: "CLOUDZONE_ARTIFACTORY_SERVER"
                 )
             }
         }
