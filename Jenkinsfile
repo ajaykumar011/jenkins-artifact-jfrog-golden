@@ -43,10 +43,13 @@ pipeline {
                     docker.withRegistry("${env.REGISTRY}", 'JFROG_WEB_CREDENTIALS') {
                             customImage.push()
                             customImage.push('latest')
+                        }
                     }
+                }   
             }
         }
     }
+
     post {
         always {
             cleanWs()
