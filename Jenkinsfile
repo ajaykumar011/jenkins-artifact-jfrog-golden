@@ -64,32 +64,32 @@ pipeline {
 
 
 
-=======
+// =======
 
-ARTIFACTORY_DOCKER_REGISTRY should be IP/Artifactory-Repo-Key/Image:Tag
-HOST should be docker daemon (Docker for windows is localhost:2375)
+// ARTIFACTORY_DOCKER_REGISTRY should be IP/Artifactory-Repo-Key/Image:Tag
+// HOST should be docker daemon (Docker for windows is localhost:2375)
 
-    stage('Build image') { // build and tag docker image
-        steps {
-            echo 'Starting to build docker image'
+//     stage('Build image') { // build and tag docker image
+//         steps {
+//             echo 'Starting to build docker image'
 
-            script {
-                def dockerfile = 'Dockerfile'
-                def customImage = docker.build('10.20.111.23:8081/docker-virtual/hello-world:latest', "-f ${dockerfile} .")
+//             script {
+//                 def dockerfile = 'Dockerfile'
+//                 def customImage = docker.build('10.20.111.23:8081/docker-virtual/hello-world:latest', "-f ${dockerfile} .")
 
-            }
-        }
-    }
+//             }
+//         }
+//     }
 
-    stage ('Push image to Artifactory') { // take that image and push to artifactory
-        steps {
-            rtDockerPush(
-                serverId: "jFrog-ar1",
-                image: "10.20.111.23:8081/docker-virtual/hello-world:latest",
-                host: 'tcp://localhost:2375',
-                targetRepo: 'local-repo', // where to copy to (from docker-virtual)
-                // Attach custom properties to the published artifacts:
-                properties: 'project-name=docker1;status=stable'
-            )
-        }
-    }
+//     stage ('Push image to Artifactory') { // take that image and push to artifactory
+//         steps {
+//             rtDockerPush(
+//                 serverId: "jFrog-ar1",
+//                 image: "10.20.111.23:8081/docker-virtual/hello-world:latest",
+//                 host: 'tcp://localhost:2375',
+//                 targetRepo: 'local-repo', // where to copy to (from docker-virtual)
+//                 // Attach custom properties to the published artifacts:
+//                 properties: 'project-name=docker1;status=stable'
+//             )
+//         }
+//     }
