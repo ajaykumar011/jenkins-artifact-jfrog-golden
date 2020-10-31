@@ -4,7 +4,7 @@ pipeline {
         timestamps()
     }
     environment {
-        REGISTRY = "cloudzone.jfrog.io"
+        REGISTRY = "https://cloudzone.jfrog.io/artifact"
         IMAGE = "cloudzone.jfrog.io/jenkins-artifact-jfrog-golden"
         
     }
@@ -42,13 +42,13 @@ pipeline {
                     println image.id + " container is running at host port, " + contport
                     docker.withRegistry("${env.REGISTRY}", 'JFROG_WEB_CREDENTIALS') {
                             customImage.push()
-                            customImage.push('latest')
+                            //customImage.push('latest')
                         }
                     }
                 }   
             }
-        }
     }
+    
 
     post {
         always {
