@@ -31,7 +31,7 @@ pipeline {
                 script {
                     // https://hub.docker.com/repository/docker/ajaykumar011/docker-as-agent-in-jenkins
                     def container = image.run('-p 80')
-                    def contport = container.port(80)
+                    //def contport = container.port(80) #use this if you know the port of container
                     println image.id + " container is running at host port, " + contport
                     docker.withRegistry("${env.REGISTRY}", 'JFROG_WEB_CREDENTIALS') {
                             image.push("${GIT_HASH}")
