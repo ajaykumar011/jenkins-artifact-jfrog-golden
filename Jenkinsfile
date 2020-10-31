@@ -4,8 +4,9 @@ pipeline {
         timestamps()
     }
     environment {
-        REGISTRY = "https://cloudzone.jfrog.io/artifact/jenkins-artifact-jfrog-golden"
-        IMAGE = "hello-world"
+        REGISTRY = "https://cloudzone.jfrog.io/"
+        //IMAGE = "hello-world"
+        IMAGE = "cloudzone.jfrog.io/jenkins-artifact-jfrog-golden/hello-world"
         
     }
     stages {
@@ -25,7 +26,7 @@ pipeline {
                     def dockerfile = 'Dockerfile'
                     //image = docker.build("${IMAGE}")
                     customImage = docker.build("${IMAGE}:${env.BUILD_ID}")
-                    
+                    //docker tag hello-world:182 cloudzone.jfrog.io/jenkins-artifact-jfrog-golden/hello-world:latest
                     //docker push ${server-name}.jfrog.io/{repo-name}/<image name>
                     //docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', 'dockerfiles')
                     //image = docker.build("${IMAGE}" + "jenkins-artifact-jfrog-golden:${env.BUILD_ID}", "-f ${dockerfile}")
@@ -40,10 +41,10 @@ pipeline {
                     def container = customImage.run('-p 80')
                     def contport = container.port(80)
                     println customImage.id + " container is running at host port, " + contport
-                    // docker.withRegistry("${env.REGISTRY}", 'JFROG_WEB_CREDENTIALS') {
-                    //         customImage.push()
-                    //         //customImage.push('latest')
-                    //     }
+                    docker.withRegistry("${env.REGISTRY}", 'JFROG_WEB_CREDENTIALS') {
+                            customImage.push()
+                            customImage.push('latest')
+                        }
                     }
                 }   
             }
