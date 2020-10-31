@@ -4,8 +4,9 @@ pipeline {
         timestamps()
     }
     environment {
-        IMAGE = "jenkins-artifact-jfrog-golden"
-        REGISTRY = "https://cloudzone.jfrog.io/artifactory/"
+        REGISTRY = "cloudzone.jfrog.io"
+        IMAGE = "cloudzone.jfrog.io/jenkins-artifact-jfrog-golden"
+        
     }
     stages {
         stage('prep') {
@@ -22,9 +23,10 @@ pipeline {
             steps {
                 script {
                     def dockerfile = 'Dockerfile'
-                    //image = docker.build("${IMAGE}")
+                    image = docker.build("${IMAGE}")
+                    //docker push ${server-name}.jfrog.io/{repo-name}/<image name>
                     //docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', 'dockerfiles')
-                    image = docker.build("${IMAGE}" + "jenkins-artifact-jfrog-golden:${env.BUILD_ID}", "-f ${dockerfile}")
+                    //image = docker.build("${IMAGE}" + "jenkins-artifact-jfrog-golden:${env.BUILD_ID}", "-f ${dockerfile}")
                     println "Newly generated image, " + image.id
                 }
             }
