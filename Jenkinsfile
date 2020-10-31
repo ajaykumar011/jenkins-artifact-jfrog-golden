@@ -31,7 +31,7 @@ pipeline {
                     //docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', 'dockerfiles')
                     //docker.build("jenkins-artifact-jfrog-golden:${env.BUILD_ID}", "-f ${dockerfile} ./dockerfiles")
                     def dockerfile = 'Dockerfile.jfrog'
-                    def customImage = docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', "-f ${dockerfile} ./dockerfiles")
+                    def customImage = docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', "-f ${dockerfile} ./dockerfiles/.")
                 }
             }
         }
