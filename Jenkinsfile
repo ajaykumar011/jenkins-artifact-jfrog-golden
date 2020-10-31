@@ -29,7 +29,7 @@ pipeline {
                     //docker push ${server-name}.jfrog.io/{repo-name}/<image name>
                     //docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', 'dockerfiles')
                     //image = docker.build("${IMAGE}" + "jenkins-artifact-jfrog-golden:${env.BUILD_ID}", "-f ${dockerfile}")
-                    println "Newly generated image, " + image.id
+                    println "Newly generated image, " + customImage.id
                 }
             }
         }
@@ -37,9 +37,9 @@ pipeline {
             steps {
                 script {
                     // https://hub.docker.com/repository/docker/ajaykumar011/docker-as-agent-in-jenkins
-                    def container = image.run('-p 80')
+                    def container = customImage.run('-p 80')
                     def contport = container.port(80)
-                    println image.id + " container is running at host port, " + contport
+                    println customImage.id + " container is running at host port, " + contport
                     docker.withRegistry("${env.REGISTRY}", 'JFROG_WEB_CREDENTIALS') {
                             customImage.push()
                             //customImage.push('latest')
