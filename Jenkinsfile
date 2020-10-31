@@ -41,7 +41,7 @@ pipeline {
                     def container = customImage.run('-p 80')
                     def contport = container.port(80)
                     println customImage.id + " container is running at host port, " + contport
-                    docker.withRegistry("${env.REGISTRY}", 'JFROG_WEB_CREDENTIALS') {
+                    docker.withRegistry("${env.REGISTRY}", 'Jfrog-cred') {
                             customImage.push()
                             customImage.push('latest')
                         }
