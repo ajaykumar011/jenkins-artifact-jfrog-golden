@@ -4,7 +4,7 @@ pipeline {
         timestamps()
     }
     environment {
-        REGISTRY = "https://cloudzone.jfrog.io/artifact"
+        REGISTRY = "https://cloudzone.jfrog.io/artifact/jenkins-artifact-jfrog-golden"
         IMAGE = "cloudzone.jfrog.io/jenkins-artifact-jfrog-golden"
         
     }
