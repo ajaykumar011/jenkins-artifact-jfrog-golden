@@ -4,6 +4,7 @@ pipeline {
         SERVER_URL = "cloudzone.jfrog.io"
         CREDENTIALS = "JFROG_WEB_CREDENTIALS"
         ARTIFACTORY_DOCKER_REGISTRY = "cloudzone.jfrog.io"
+        HOST_NAME = "tcp://127.0.0.1:1234"
     }
     stages {
         stage ('Clone') {
