@@ -1,6 +1,9 @@
 pipeline {
     agent any
-
+    environment{
+        SERVER_URL = "cloudzone.jfrog.io"
+        CREDENTIALS = "JFROG_WEB_CREDENTIALS"
+    }
     stages {
         stage ('Clone') {
             steps {
