@@ -1,58 +1,53 @@
 pipeline {
     agent any
-    environment{
-        SERVER_URL = "cloudzone.jfrog.io"
-        CREDENTIALS = "JFROG_WEB_CREDENTIALS"
-        ARTIFACTORY_DOCKER_REGISTRY = "cloudzone.jfrog.io"
-        HOST_NAME = "tcp://127.0.0.1:1234"
+    options {
+        timestamps()
+    }
+    environment {
+        IMAGE = "jenkins-artifact-jfrog-golden"
+        REGISTRY = "https://cloudzone.jfrog.io/artifactory/"
     }
     stages {
-        stage ('Clone') {
-            steps {
-                git branch: 'master', url: "https://github.com/jfrog/project-examples.git"
-            }
-        }
-
-        stage ('Artifactory configuration') {
-            steps {
-                rtServer (
-                    id: "CLOUDZONE_ARTIFACTORY_SERVER",
-                    url: SERVER_URL,
-                    credentialsId: CREDENTIALS
-                )
-            }
-        }
-
-        stage ('Build docker image') {
+        stage('prep') {
             steps {
                 script {
-                    docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/hello-world:latest', 'jenkins-examples/pipeline-examples/resources')
+                    env.GIT_HASH = sh(
+                        script: "git show --oneline | head -1 | cut -d' ' -f1",
+                        returnStdout: true
+                    ).trim()
                 }
             }
         }
-
-        stage ('Push image to Artifactory') {
+        stage('build') {
             steps {
-                rtDockerPush(
-                    serverId: "CLOUDZONE_ARTIFACTORY_SERVER",
-                    image: ARTIFACTORY_DOCKER_REGISTRY + '/hello-world:latest',
-                    // Host:
-                    // On OSX: "tcp://127.0.0.1:1234"
-                    // On Linux can be omitted or null
-                    //host: HOST_NAME,
-                    targetRepo: 'docker-local',
-                    // Attach custom properties to the published artifacts:
-                    properties: 'project-name=docker1;status=stable'
-                )
+                script {
+                    image = docker.build("${IMAGE}")
+                    println "Newly generated image, " + image.id
+                }
             }
         }
-
-        stage ('Publish build info') {
+        stage('test') {
             steps {
-                rtPublishBuildInfo (
-                    serverId: "CLOUDZONE_ARTIFACTORY_SERVER"
-                )
+                script {
+                    // https://hub.docker.com/repository/docker/ajaykumar011/docker-as-agent-in-jenkins
+                    def container = image.run('-p 80')
+                    def contport = container.port(80)
+                    println image.id + " container is running at host port, " + contport
+                    docker.withRegistry("${env.REGISTRY}", 'JFROG_WEB_CREDENTIALS') {
+                            image.push("${GIT_HASH}")
+                            if ( "${env.BRANCH_NAME}" == "main" ) {
+                                image.push("LATEST")
+                            }
+                        }
+                        currentBuild.result = "SUCCESS"
+                    }
+                }
             }
+        }
+    }
+    post {
+        always {
+            cleanWs()
         }
     }
 }
