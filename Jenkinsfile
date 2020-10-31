@@ -21,7 +21,10 @@ pipeline {
         stage('build') {
             steps {
                 script {
-                    image = docker.build("${IMAGE}")
+                    def dockerfile = 'Dockerfile'
+                    //image = docker.build("${IMAGE}")
+                    //docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', 'dockerfiles')
+                    image = docker.build("${IMAGE}" + "jenkins-artifact-jfrog-golden:${env.BUILD_ID}", "-f ${dockerfile}")
                     println "Newly generated image, " + image.id
                 }
             }
