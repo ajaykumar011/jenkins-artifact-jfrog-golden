@@ -1,97 +1,54 @@
 pipeline {
     agent any
-    environment{
-        //ARTIFACTORY_DOCKER_REGISTRY = "cloudzone.jfrog.io"
-        ARTIFACTORY_DOCKER_REGISTRY = "cloudzone.jfrog.io/example-repo-local"
+    options {
+        timestamps()
+    }
+    environment {
+        REGISTRY = "https://cloudzone.jfrog.io/"
+        IMAGE = "cloudzone.jfrog.io/jenkins-artifact-jfrog-golden/hello-world"
+        // Hello-world the real file where jenkins-artifcat-jfrog-golden is storageor artifact.
+        
     }
     stages {
-        stage ('Clone') {
-            steps {
-                echo "cloning"
-                //git branch: 'main', url: 'https://github.com/ajaykumar011/jenkins-artifact-jfrog-golden/'
-                //git branch: 'master', credentialsId: 'bitbucket-cred', url: 'https://bitbucket.org/jenkins-all-in-one/just-test/'
-            }
-        }
-
-        stage ('Artifactory configuration') {
-            steps {
-                rtServer (
-                    id: "CLOUDZONE_ARTIFACTORY_SERVER",
-                    url: "https://cloudzone.jfrog.io/artifactory/example-repo-local/",
-                    credentialsId: 'Jfrog-cred',
-                    bypassProxy: true,
-                    timeout: 300
-                )
-            }
-        }
-
-        stage ('Build docker image') {
+        stage('prep') {
             steps {
                 script {
-                    def dockerfile = 'Dockerfile'
-                    //docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/hello-world:latest')
-                    docker.build(ARTIFACTORY_DOCKER_REGISTRY + "/hello-world2:${env.BUILD_ID}")
-                    //docker.build("jenkins-artifact-jfrog-golden:${env.BUILD_ID}", "-f ${dockerfile}" ./dockerfiles)
-                    //def dockerfile = 'Dockerfile.jfrog'
-                    //def customImage = docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', "-f ${dockerfile} dockerfiles")
+                    env.GIT_HASH = sh(
+                        script: "git show --oneline | head -1 | cut -d' ' -f1",
+                        returnStdout: true
+                    ).trim()
                 }
             }
         }
-
-        stage ('Push image to Artifactory') {
+        stage('build') {
             steps {
-                rtDockerPush(
-                    serverId: "CLOUDZONE_ARTIFACTORY_SERVER",
-                    image: ARTIFACTORY_DOCKER_REGISTRY + "/hello-world2:${env.BUILD_ID}",
-                    // Host:
-                    // On OSX: "tcp://127.0.0.1:1234"
-                    // On Linux can be omitted or null
-                    //host: 'tcp://127.0.0.1:1234',
-                    targetRepo: 'example-repo-local', // where to copy to (from docker-virtual)
-                    // Attach custom properties to the published artifacts:
-                    properties: 'project-name=docker1;status=stable'
-                )
+                script {
+                    def dockerfile = 'Dockerfile'
+                    customImage = docker.build("${IMAGE}:${env.BUILD_ID}")
+                    println "Newly generated image, " + customImage.id
+                }
             }
         }
-
-        stage ('Publish build info') {
+        stage('test') {
             steps {
-                rtPublishBuildInfo (
-                    serverId: "CLOUDZONE_ARTIFACTORY_SERVER"
-                )
+                script {
+                    // https://cloudzone.jfrog.io/artifactory/jenkins-artifact-jfrog-golden/hello-world/
+                    def container = customImage.run('-p 80')
+                    def contport = container.port(80)
+                    println customImage.id + " container is running at host port, " + contport
+                    docker.withRegistry("${env.REGISTRY}", 'Jfrog-cred') {
+                            customImage.push()
+                            customImage.push('latest')
+                        }
+                    }
+                }   
             }
+    }
+
+    post {
+        always {
+            echo "Clearing space"
+            cleanWs()
         }
     }
 }
-
-
-
-// =======
-
-// ARTIFACTORY_DOCKER_REGISTRY should be IP/Artifactory-Repo-Key/Image:Tag
-// HOST should be docker daemon (Docker for windows is localhost:2375)
-
-//     stage('Build image') { // build and tag docker image
-//         steps {
-//             echo 'Starting to build docker image'
-
-//             script {
-//                 def dockerfile = 'Dockerfile'
-//                 def customImage = docker.build('10.20.111.23:8081/docker-virtual/hello-world:latest', "-f ${dockerfile} .")
-
-//             }
-//         }
-//     }
-
-//     stage ('Push image to Artifactory') { // take that image and push to artifactory
-//         steps {
-//             rtDockerPush(
-//                 serverId: "jFrog-ar1",
-//                 image: "10.20.111.23:8081/docker-virtual/hello-world:latest",
-//                 host: 'tcp://localhost:2375',
-//                 targetRepo: 'local-repo', // where to copy to (from docker-virtual)
-//                 // Attach custom properties to the published artifacts:
-//                 properties: 'project-name=docker1;status=stable'
-//             )
-//         }
-//     }
