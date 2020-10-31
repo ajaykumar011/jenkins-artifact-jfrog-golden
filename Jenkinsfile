@@ -30,7 +30,7 @@ pipeline {
                 script {
                     def dockerfile = 'Dockerfile'
                     //docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/hello-world:latest')
-                    docker.build(ARTIFACTORY_DOCKER_REGISTRY + "/hello-world:${env.BUILD_ID}")
+                    docker.build(ARTIFACTORY_DOCKER_REGISTRY + "/hello-world2:${env.BUILD_ID}")
                     //docker.build("jenkins-artifact-jfrog-golden:${env.BUILD_ID}", "-f ${dockerfile}" ./dockerfiles)
                     //def dockerfile = 'Dockerfile.jfrog'
                     //def customImage = docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', "-f ${dockerfile} dockerfiles")
@@ -42,7 +42,7 @@ pipeline {
             steps {
                 rtDockerPush(
                     serverId: "CLOUDZONE_ARTIFACTORY_SERVER",
-                    image: ARTIFACTORY_DOCKER_REGISTRY + '/hello-world:latest',
+                    image: ARTIFACTORY_DOCKER_REGISTRY + "/hello-world2:${env.BUILD_ID}",
                     // Host:
                     // On OSX: "tcp://127.0.0.1:1234"
                     // On Linux can be omitted or null
