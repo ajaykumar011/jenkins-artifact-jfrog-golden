@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     def dockerfile = 'Dockerfile.jfrog'
-                    docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', 'dockerfiles')
+                    docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', "-f ${dockerfile} ./dockerfiles")
                     //docker.build("jenkins-artifact-jfrog-golden:${env.BUILD_ID}", "-f ${dockerfile} ./dockerfiles")
                 }
             }
