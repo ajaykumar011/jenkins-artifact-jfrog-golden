@@ -52,7 +52,8 @@ pipeline {
 
     post {
         always {
-            cleanWs()
+            echo "Clearing space"
+            //cleanWs()
         }
     }
 }
