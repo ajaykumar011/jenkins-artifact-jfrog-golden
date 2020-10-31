@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment{
         //ARTIFACTORY_DOCKER_REGISTRY = "cloudzone.jfrog.io"
-        ARTIFACTORY_DOCKER_REGISTRY = "cloudzone.jfrog.io/example-repo-local/"
+        ARTIFACTORY_DOCKER_REGISTRY = "cloudzone.jfrog.io/example-repo-local"
     }
     stages {
         stage ('Clone') {
