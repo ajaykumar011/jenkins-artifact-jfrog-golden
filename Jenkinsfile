@@ -23,7 +23,9 @@ pipeline {
             steps {
                 script {
                     def dockerfile = 'Dockerfile'
-                    image = docker.build("${IMAGE}")
+                    //image = docker.build("${IMAGE}")
+                    customImage = docker.build("${IMAGE}:${env.BUILD_ID}")
+                    
                     //docker push ${server-name}.jfrog.io/{repo-name}/<image name>
                     //docker.build(ARTIFACTORY_DOCKER_REGISTRY + '/jenkins-artifact-jfrog-golden:latest', 'dockerfiles')
                     //image = docker.build("${IMAGE}" + "jenkins-artifact-jfrog-golden:${env.BUILD_ID}", "-f ${dockerfile}")
@@ -39,13 +41,9 @@ pipeline {
                     def contport = container.port(80)
                     println image.id + " container is running at host port, " + contport
                     docker.withRegistry("${env.REGISTRY}", 'JFROG_WEB_CREDENTIALS') {
-                            image.push("${GIT_HASH}")
-                            if ( "${env.BRANCH_NAME}" == "main" ) {
-                                image.push("LATEST")
-                            }
-                        }
-                    currentBuild.result = "SUCCESS"
-                }
+                            customImage.push()
+                            customImage.push('latest')
+                    }
             }
         }
     }
